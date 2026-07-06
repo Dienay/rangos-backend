@@ -11,15 +11,19 @@ show_help() {
   echo "Usage: ./run.sh <command>"
   echo ""
   echo "Available commands:"
-    echo "  up    - Inicia os containers"
-    echo "  build - Build dos containers"
-    echo "  rebuild - Rebuild dos containers"
+  echo "  up [args]     - Start the containers (defaults to --attach api;"
+  echo "                  pass your own args to override, e.g."
+  echo "                  run up --attach mongo redis)"
     echo "  rebuild:force - Rebuild com force-recreate"
-    echo "  down  - Para e remove os containers"
-    echo "  logs  - Mostra logs em tempo real"
-    echo "  stop  - Para os containers"
-    echo "  restart - Reinicia os containers"
-    echo "  ps    - Lista containers em execução"
+  echo "  build         - Build the containers"
+  echo "  rebuild       - Rebuild the containers"
+  echo "  rebuild:force - Rebuild with force-recreate"
+  echo "  down          - Stop and remove the containers"
+  echo "  logs [service] - Show live logs (optionally filtered to one or"
+  echo "                  more services, e.g. run logs redis)"
+  echo "  stop          - Stop the containers"
+  echo "  restart       - Restart the containers"
+  echo "  ps            - List running containers"
   echo "  clean         - Remove containers, volumes, local images and"
   echo "                  orphaned/dangling resources from this project"
   echo "  clean:all     - Same as clean, but also removes third-party"
@@ -98,14 +102,16 @@ purge_everything_by_label() {
   echo ">> Cleaning up build cache for project '${PROJECT_NAME}'..."
   docker builder prune -f --filter "$filter" || true
 }
+
+# Available commands
 case $COMMAND in
-    up)
-        docker-compose up
-        ;;
-    build)
-        docker-compose build
-        ;;
-    rebuild)
+  up)
+    if [ $# -eq 0 ]; then
+      docker-compose up --attach api
+    else
+      docker-compose up "$@"
+    fi
+  ;;
         docker-compose up --build
         ;;
     rebuild:force)
@@ -130,6 +136,30 @@ case $COMMAND in
         show_help
         exit 1
         ;;
+  build)
+    docker-compose build
+  ;;
+  rebuild)
+    docker-compose up --build
+  ;;
+  rebuild:force)
+    docker-compose up --build --force-recreate
+  ;;
+  down)
+    docker-compose down
+  ;;
+  logs)
+    docker-compose logs -f "$@"
+  ;;
+  stop)
+    docker-compose stop
+  ;;
+  restart)
+    docker-compose restart
+  ;;
+  ps)
+    docker-compose ps
+  ;;
   clean)
     resolve_project_name
     echo ">> Tearing down containers, volumes and locally built images..."
