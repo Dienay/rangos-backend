@@ -1,3 +1,5 @@
+name: rangos-api
+
 services:
   api:
     build: .
