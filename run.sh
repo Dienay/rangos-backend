@@ -14,7 +14,7 @@ show_help() {
   echo "  up [args]     - Start the containers (defaults to --attach api;"
   echo "                  pass your own args to override, e.g."
   echo "                  run up --attach mongo redis)"
-    echo "  rebuild:force - Rebuild com force-recreate"
+  echo "  seed          - Populate/seed database (requires containers to be running)"
   echo "  build         - Build the containers"
   echo "  rebuild       - Rebuild the containers"
   echo "  rebuild:force - Rebuild with force-recreate"
@@ -112,30 +112,14 @@ case $COMMAND in
       docker-compose up "$@"
     fi
   ;;
-        docker-compose up --build
-        ;;
-    rebuild:force)
-        docker-compose up --build --force-recreate
-        ;;
-    down)
-        docker-compose down
-        ;;
-    logs)
-        docker-compose logs -f
-        ;;
-    stop)
-        docker-compose stop
-        ;;
-    restart)
-        docker-compose restart
-        ;;
-    ps)
-        docker-compose ps
-        ;;
-    *)
-        show_help
+  seed)
+    echo ">> Running populate..."
+    if ! docker compose ps api | grep -q "Up"; then
+        echo "The API is not running. Please start the containers first with 'run up' and try again."
         exit 1
-        ;;
+    fi
+    docker-compose exec api npm run populate
+  ;;
   build)
     docker-compose build
   ;;
