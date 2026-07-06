@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Script de execução para o projeto Rangos API
+# Execution script for Docker Compose projects
 
 set -e
 
 # Função para mostrar ajuda
 show_help() {
-    echo "Script de execução para Rangos API"
+  echo "Execution script for Docker Compose projects"
     echo ""
     echo "Uso: ./run.sh <comando>"
     echo ""
