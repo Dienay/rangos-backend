@@ -27,16 +27,15 @@ services:
       - seed
 
   mongo:
-    image: mongo:5
+    image: mongo:latest
     container_name: rangos-mongo
     restart: always
     ports:
       - '27017:27017'
     volumes:
       - mongo_data:/data/db
-    command: mongod --quiet --logpath /dev/null
     healthcheck:
-      test: ['CMD', 'mongo', '--eval', 'db.runCommand("ping").ok']
+      test: ['CMD', 'mongosh', '--eval', 'db.runCommand("ping").ok']
       interval: 10s
       timeout: 5s
       retries: 5
