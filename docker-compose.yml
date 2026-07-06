@@ -16,16 +16,6 @@ services:
         condition: service_healthy
     restart: always
 
-  populate:
-    build: .
-    env_file:
-      - .env
-    depends_on:
-      - mongo
-    command: npm run populate
-    profiles:
-      - seed
-
   mongo:
     image: mongo:latest
     container_name: rangos-mongo
